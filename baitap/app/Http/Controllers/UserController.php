@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
+use function Laravel\Prompts\select;
 
 class UserController extends Controller
 {
@@ -75,16 +78,83 @@ class UserController extends Controller
         // DB::table('users')->insert($data);
 
         //14. Thêm chữ 'PĐT' sau tên tất cả user ở phòng ban 'Ban đào tạo'
-        $idPhongBan = DB::table('phongban')
-                        ->where('ten_donvi','like','%Ban đào tạo%')->value('id');
-        $result = DB::table('users')->where('phongban_id',$idPhongBan)
-                ->select('id','name','email')
-                -> get();
+        // $idPhongBan = DB::table('phongban')
+        //                 ->where('ten_donvi','like','%Ban đào tạo%')->value('id');
+        // $result = DB::table('users')->where('phongban_id',$idPhongBan)
+        //         ->select('id','name','email')
+        //         -> get();
 
-        foreach($result as $value){
-            DB::table('users')->where('id',$value->id)->update(['name' => $value->name .' '.'PĐT']);
-        }
+        // foreach($result as $value){
+        //     DB::table('users')->where('id',$value->id)->update(['name' => $value->name .' '.'PĐT']);
+        // }
         //  15. Xóa user nghỉ quá 15 ngày
-        dd($result);
+        // DB::table('users')->where('phongban_id')->delete();
+
+
+
+        // dd($result);
+    }
+    public function listUsers(){
+        $listUsers = DB::table('users')
+            ->join('phongban', 'phongban.id', '=', 'users.phongban_id')
+            ->select('users.id', 'users.name', 'users.email', 'users.songaynghi', 'phongban.ten_donvi')
+            ->get();
+        return view('users/listUsers') -> with([
+            'listUsers' => $listUsers
+        ]);
+    }
+    public function addUser(){
+        $phongBan = DB::table('phongban')->select('id', 'ten_donvi')->get();
+        return view('users/addUser')->with([
+        'phongBan' => $phongBan
+       ]);
+    }
+    public function addPostUser(Request $request){
+        $data=[
+            [
+                'name' => $request->nameUser,
+                'email' => $request->emailUser,
+                'tuoi'=>$request-> ageUser,
+                'phongban_id' => $request -> phongbanUser,
+                'created_at' => Carbon :: now(),
+                'updated_at' => Carbon :: now()
+            ]
+        ];
+        DB::table('users')->insert($data); 
+        return redirect()-> route('users.listUsers');
+    }
+
+    public function deleteUser($idUser){
+        DB::table('users')->where('id', '=', $idUser)->delete();
+        return redirect()-> route('users.listUsers');
+        
+    }
+
+    public function updateUser($idUser){
+        $phongBan = DB::table('phongban')->select('id', 'ten_donvi')->get();
+        $user = DB::table('users')-> where('users.id', '=', $idUser) 
+            ->join('phongban', 'phongban.id','=','users.phongban_id')
+            ->select('users.id', 'users.name', 'users.tuoi', 'users.email', 'users.songaynghi', 'phongban.ten_donvi')
+            ->first();
+        return view('users/updateUser')->with([
+            'user'=> $user,
+            'phongBan' => $phongBan
+            
+        ]);
+    }
+    
+    public function updatePostUser(Request $request){
+        $data=[
+            [
+                'name' => $request->nameUser,
+                'email' => $request->emailUser,
+                'tuoi'=>$request-> ageUser,
+                'phongban_id' => $request -> phongbanUser,
+                'updated_at' => Carbon :: now()
+            ]
+        ];
+        DB::table('users')->where('id' ,'=' ,$request ->idUser)
+        ->update($data);
+        return redirect()-> route('users.listUsers');
     }
 }
