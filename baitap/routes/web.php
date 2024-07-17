@@ -38,3 +38,5 @@ Route::group(['prefix' => 'product' ,'as' => 'product.'], function (){
     Route::get('update-product/{id}',[ProductController::class, 'updateProduct'])-> name('updateProduct');
     Route::post('update-product',[ProductController::class, 'updatePostProduct'])-> name('updatePostProduct');
 });
+
+Route::get('test',[ProductController::class, 'test']);

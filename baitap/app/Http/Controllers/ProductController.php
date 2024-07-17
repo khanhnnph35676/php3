@@ -64,4 +64,7 @@ class ProductController extends Controller
         
         return redirect()->route('product.listProducts');
     }
+    public function test(){
+        return view('admin/product/list-product');
+    }
 }
