@@ -17,9 +17,9 @@ class ProductCommentFactory extends Factory
         return [
             'userId' => User::all()-> random()->id,
             'productId' => Product::all()->random()->id,
-            'comment'=>$this->faker->words,
+            'comment'=>$this->faker->word,
             'created_at' => $this->faker->dateTime,
-            'updated_at' => $this->faker->dateTime
+            'updated_at' => $this->faker->dateTime,
         ];
     }
 }
