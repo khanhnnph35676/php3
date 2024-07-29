@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('product', function (Blueprint $table){
             $table->increments('id');
             $table->string('name',200);
-            $table->float('price',8,2);// 88888888.22
+            $table->float('price',10,2);// 88888888.22
             $table->timestamps(); // creat at || update at
         });
     }

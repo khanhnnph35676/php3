@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\File;
 class ProductController extends Controller
 {
     public function listProducts(){
-        $product = Product:: all();
+        $listProduct = Product::paginate(10);
         return view('admin.product.list-product')->with([
-            'product'=>$product
+            'listProduct'=>$listProduct
         ]);
     }
     public function addProduct(){
@@ -35,6 +35,16 @@ class ProductController extends Controller
         Product::create($data);
         return redirect()->route('admin.products.listProducts')->with([
             'message' => 'Thêm mới thành công'
+        ]);
+    }
+    function deleteProduct(Request $request){
+        $product = Product::find($request->idProduct);
+        if($product->image !=null && $product->image != ''){
+            File::delete(public_path($product->image));
+        }
+        $product->delete();
+        return redirect()->back()->with([
+            'mesage'=>'Xoá thành công'
         ]);
     }
 }

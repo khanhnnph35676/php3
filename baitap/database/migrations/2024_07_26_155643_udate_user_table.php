@@ -6,11 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::table('product',function(Blueprint $table){
-           $table->string('image',500)->nullable();
+        Schema::table('users', function (Blueprint $table) {
+            $table->enum('role',['1','2'])->default('2');
         });
     }
 
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('role');
+        });
     }
 };
